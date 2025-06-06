@@ -1,0 +1,7 @@
+<div class="card">
+    <div class="container">
+        <p-button *ngxPermissionsOnly="[]" label="load json" [loading]="loading" (onClick)="load_json()"></p-button><p style="color: black;">{{response}}</p>
+        <p-button *ngxPermissionsOnly="[]" label="run zeek" [loading]="loading" (onClick)="run_zeek()"></p-button><p style="color: black;">{{response}}</p>
+    </div>
+</div>
+

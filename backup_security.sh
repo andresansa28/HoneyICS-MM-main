@@ -1,0 +1,1 @@
+docker compose exec os01 bash -c "bash /usr/share/opensearch/plugins/opensearch-security/tools/securityadmin.sh -backup ~/backup -cacert config/certificates/ca/ca.pem -cert config/certificates/ca/admin.pem -key config/certificates/ca/admin.key -h localhost"

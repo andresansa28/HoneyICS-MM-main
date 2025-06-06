@@ -1,0 +1,75 @@
+<p-card>
+  <p-messages></p-messages>
+  <div class="card">
+    <p-table [value]="users">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Username</th>
+          <th>Name</th>
+          <th>Surname</th>
+          <th>Role Management</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>{{user.username}}</td>
+          <td>{{user.firstName}}</td>
+          <td>{{user.lastName}}</td>
+          <td>
+            <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editUser(user.id)"></button>
+          </td>
+          <td>
+            <button pButton (click)="deleteUser(user.id)" pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"></button>
+          </td>
+
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-card>
+    <h5>Create new user</h5>
+    <div class="field">
+      <label for="username" class="block">Username</label>
+      <input id="username" type="username" aria-describedby="username1-help" pInputText [(ngModel)]="username" />
+    </div>
+    <div class="field">
+      <label for="firstname" class="block">First Name</label>
+      <input id="firstname" type="username" aria-describedby="username1-help" pInputText [(ngModel)]="firstname" />
+    </div>
+    <div class="field">
+      <label for="lastname" class="block">Last Name</label>
+      <input id="lastname" type="username" aria-describedby="username1-help" pInputText [(ngModel)]="lastname" />
+    </div>
+    <div class="field">
+      <label for="email" class="block">Email</label>
+      <input id="email" type="email" aria-describedby="username1-help" pInputText [(ngModel)]="email" />
+    </div>
+    <div class="field">
+      <label for="password" class="block">Password</label>
+      <input id="password" type="password" aria-describedby="username1-help" pInputText [(ngModel)]="password" />
+    </div>
+    <p-button (onClick)="createUser()" type="button" icon="pi pi-check" label="Create" styleClass="p-button-confirm">
+    </p-button>
+  </p-card>
+
+  <p-dialog [(visible)]="productDialog" [style]="{width: '450px'}" header="Groups Management" [modal]="true" styleClass="p-fluid">
+    <p-table [value]="groups">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Role</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-group>
+        <tr>
+          <td>{{group.name}}</td>
+          <td>
+            <p-radioButton [inputId]="group.name" name="category" [value]="group.name" [(ngModel)]="selectedValue" ></p-radioButton>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-button (onClick)="changeValue()" type="button" icon="pi pi-check" label="Set Group" styleClass="p-button-confirm">
+    </p-button>
+  </p-dialog>
+</p-card>

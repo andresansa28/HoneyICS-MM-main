@@ -1,0 +1,130 @@
+version: "3"
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.0
+    container_name: keycloak   
+    command: ['start-dev','--health-enabled=true','--http-relative-path=/auth']
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_SCHEMA: public
+      KC_DB_PASSWORD: password
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_LOGIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_HTTPS_CERTIFICATE_FILE: /etc/x509/https/tls.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/tls.key
+   
+    volumes:
+      - ./certs/keycloak:/etc/x509/https
+    ports:
+      - 8443:8443
+    depends_on:
+      - postgres
+    networks:
+      framework:
+        ipv4_address: 172.20.0.2
+    
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+
+    networks:
+      framework:
+        ipv4_address: 172.20.0.3
+
+  os01:
+    image: opensearchproject/opensearch:2.9.0
+    container_name: os01
+    environment:
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      node.name: os01
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      JAVA_HOME: /usr/share/opensearch/jdk
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml
+      - ./config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
+      - ./backup:/usr/share/opensearch/backup
+      - ./certs:/usr/share/opensearch/config/certificates:ro
+      - os-data1:/usr/share/opensearch/data
+    ports:
+      - 9200:9200
+    networks:
+      framework:
+        ipv4_address: 172.20.0.4
+
+  dashboards:
+    container_name: dashboard
+    image: opensearchproject/opensearch-dashboards:2.9.0
+    ports:
+      - 5601:5601
+    volumes:
+      - ./certs:/usr/share/opensearch-dashboards/config/certificates:ro
+      - ./opensearch-dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
+    environment:
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+    networks:
+      framework:
+        ipv4_address: 172.20.0.5
+
+  analyzer:
+    container_name: analyzer
+    build: ./analyzer/   
+    volumes: 
+       - ./analyzer/Config.json:/home/Config.json
+    ports:
+      - 5003:5003
+    networks:
+      framework:
+        ipv4_address: 172.20.0.6
+
+  webapp_analyzer_bridge:
+    container_name: webapp_analyzer_bridge
+    build: ./webapp_analyzer_bridge/
+    ports:
+      - 5001:5001
+    volumes:
+      - ./analyzer/Config.json:/webapp_analyzer_bridge/Config.json
+    networks:
+      framework:
+        ipv4_address: 172.20.0.7
+
+  webapp:
+    build:
+      ./webapp/
+    ports:
+      - "5002:80"
+    networks:
+      framework:
+        ipv4_address: 172.20.0.8
+
+  backend:
+    build:
+      ./pythonFastAPI/
+    ports:
+      - "5000:80"
+    networks:
+      framework:
+        ipv4_address: 172.20.0.9
+
+        
+volumes:
+  os-data1:
+  postgres_data:
+
+networks:
+  framework:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

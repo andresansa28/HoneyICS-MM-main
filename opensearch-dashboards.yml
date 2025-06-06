@@ -1,0 +1,44 @@
+server.name: os_dashboards
+server.host: "0.0.0.0"
+
+opensearch.hosts: [https://os01:9200]
+opensearch.username: kibanaserver
+opensearch.password: kibanaserver
+
+# Encrypt traffic between the browser and OpenSearch-Dashboards
+server.ssl.enabled: true
+server.ssl.certificate: /usr/share/opensearch-dashboards/config/certificates/os-dashboards/os-dashboards.pem
+server.ssl.key: /usr/share/opensearch-dashboards/config/certificates/os-dashboards/os-dashboards.key
+
+# Encrypt traffic between OpenSearch-Dashboards and Opensearch
+opensearch.ssl.certificateAuthorities:
+  [/usr/share/opensearch-dashboards/config/certificates/ca/ca.pem]
+opensearch.ssl.verificationMode: full
+
+opensearch.requestHeadersWhitelist: ["securitytenant", "Authorization"]
+opensearch_security.multitenancy.enabled: true
+opensearch_security.multitenancy.tenants.enable_global: false
+opensearch_security.multitenancy.tenants.enable_private: false
+opensearch_security.multitenancy.tenants.preferred: ["Private", "Global"]
+opensearch_security.multitenancy.enable_filter: false
+
+opensearch_security.auth.type: openid
+opensearch_security.openid.connect_url: https://172.17.0.1:8443/auth/realms/ICSConsole/.well-known/openid-configuration
+opensearch_security.openid.base_redirect_url: https://172.17.0.1:5601
+opensearch_security.openid.client_id: dashboards
+opensearch_security.openid.client_secret: secret
+opensearch_security.openid.root_ca: /usr/share/opensearch-dashboards/config/certificates/ca/ca.pem
+opensearch_security.openid.verify_hostnames: "false"
+
+opensearchDashboards.branding:
+  logo:
+    defaultUrl: "https://example.com/sample.svg"
+    darkModeUrl: "https://172.17.0.1:5601/dark-mode-sample.svg"
+  # mark:
+  #   defaultUrl: ""
+  #   darkModeUrl: ""
+  # loadingLogo:
+  #   defaultUrl: ""
+  #   darkModeUrl: ""
+  # faviconUrl: ""
+  applicationTitle: "Just some testing"

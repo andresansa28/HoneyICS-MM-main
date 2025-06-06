@@ -1,0 +1,9 @@
+1) Configurazione file config.json:
+   -se opensearch_configured = False verranno creati tanti tenant quanti RemoteDeployment nei quali verranno caricate le due dashboard presenti nella cartella DashBoards e verrà creato un ruolo "tenant"_user che ha i permessi di accesso ai saved_objects del proprio tenant. Il programma python è già predisposto per creare in automatico gli index_pattern in base agli indici che creerà per questo è importante che il file config.json in particolare il campo name nei remotedeployment sia corretto.
+   -per poter aggiornare il database geoip aggiungere un API key al campo MaxMind_GeoDB_Key (verrà aggiornato     ogni 7 giorni).
+   -delay = tempo tra un pull e un altro dei pcap
+   -Percorso di installazione di zeek (deve essere installato anche il modulo S7comm)
+   -Il campo name nei RemoteDeployments sarà il nome del tenant associato in Opensearch e sarà anche il nome degli indici che verranno creati.
+
+Nel main.py configurare ip di connessione ad OpenSearch.
+I campi user e passw nel file config.json sono per il collegamento ssh con il remote deployment

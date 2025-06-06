@@ -1,0 +1,127 @@
+
+<div class="config_container">
+  <p-card>
+    <h1>Configurazione</h1>
+    <div class="conf_grid1">
+      <div>
+        <h3>Geo_DB Key</h3>
+        <div class="field">
+          <input [(ngModel)]="geoDbKey" id="text" type="text" class="ip_box" aria-describedby="username1-help" pInputText/>
+        </div>
+        <button pButton label="Set Key" (click)="setKeyConfig()"></button>
+        <br>
+        <br>
+        <h3>Delay</h3>
+        <div class="field">
+          <input [(ngModel)]="delayValue" id="text" type="number" class="ip_box" aria-describedby="username1-help" pInputText/>
+        </div>
+        <button pButton label="Set Delay" (click)="setDelayConfig()"></button>
+      </div>
+
+      <!-- right column -->
+        <div class="analyzer_button_container">
+          <div>
+            <h1>Analyzer</h1>
+          </div>
+          <button pButton label="Force OpenSearchSetup" (click)="forceOpenSearchSetup()"></button>
+          <div style="display: flex; gap: 1rem;">
+            <button pButton label="Start" [class]="button_green" (click)="startAnalyzer()"></button>
+            <button pButton label="Stop" [class]="button_red" (click)="stopAnalyzer()"></button>
+          </div>
+        </div>
+      </div>
+    </p-card>
+</div>
+
+<div class="add_deployment_container">
+  <p-card>
+    <div class="card_container">
+      <h1>Aggiungi un nuovo deployment</h1>
+    </div>
+    <br>
+    <br>
+    <h2>Inserisci l'ip della macchina virtuale UBUNTU</h2>
+      <div class="field field_responsive">
+        <input id="text" type="text" class="ip_box" aria-describedby="username1-help" pInputText/>
+      </div>
+      
+      <h2>Deployment Configuration</h2>
+      <div class="conf_grid">
+        <!-- Left Column -->
+        <div>
+          
+          <div>
+            <h3>Deploy Name</h3>
+            <div class="field">
+              <input [(ngModel)]="name_input" id="name_input" type="text" class="ip_box" aria-describedby="name" pInputText/>
+            </div>
+            
+            <h3>IP</h3>
+            <div class="field">
+              <input [(ngModel)]="IP_input" id="ip_input" type="text" class="ip_box" aria-describedby="ip" pInputText/>
+            </div>
+            
+            
+          </div>
+        </div>
+        
+        <!-- Right Column (Empty for now) -->
+        <div>
+          <h3>Username</h3>
+          <div class="field">
+            <input [(ngModel)]="user_input" id="user_input" type="text" class="ip_box" aria-describedby="user" pInputText/>
+          </div>
+          
+          <h3>User password</h3>
+          <div class="field">
+            <input [(ngModel)]="passw_input" id="passw_input" type="text" class="ip_box" aria-describedby="passw" pInputText/>
+          </div>
+        </div>
+      </div>
+
+      <div class="file-upload-container">
+
+        <h2>Indirizzi ip dei PLCs</h2>
+        <div class="ips_box file-upload-container">
+          <div *ngFor="let container of Containers_input; let i= index">
+            <p  class="ip">{{i+1 + "\) "}}<strong>{{container.name}} | {{container.IP}}</strong></p>
+          </div>
+        </div>
+        <h4>Name</h4>
+        <input style="max-width: 50%;" [(ngModel)]="add_container_name_input" id="add_container_input" type="text" class="ip_box" aria-describedby="Add a plc ip" pInputText/>
+        <h4>IP</h4>
+        <input style="max-width: 50%;" [(ngModel)]="add_container_ip_input" id="add_container_input" type="text" class="ip_box" aria-describedby="Add a plc ip" pInputText/>
+        <br>
+        <button pButton label="Add" (click)="addPlcIp()"></button>
+      </div>
+      
+      <p-divider></p-divider>
+      <div style="display: flex; width: 100%; justify-content: end;">
+        <button pButton label="Add Deployment" (click)="addDeployment()"></button>
+      </div>
+      
+      <h2>Carica file zip</h2>
+      <div class="file-upload-container">
+        <p-fileUpload mode="advanced" chooseLabel="Choose" name="file" url="http://172.17.0.1:5003/upload_json/" accept=".json" (onUpload)="onUpload($event)"></p-fileUpload>
+      </div>
+    </p-card>
+  </div>
+
+<div class="deployments_container">
+  <p-card *ngFor="let deploy of deployments.RemoteDeployments;index as i;" >  
+    <div class="padding_container">
+      <div class="title_container">
+        <h2>{{deploy.name}} ({{deploy.IP}})</h2>
+        <button pButton label="remove" class="button_red1" (click)="removeDeployment(deploy.IP)"></button>
+      </div>
+      
+      <div [ngClass]="isDivActive? 'null' : 'disable-content'">
+        <h3>Indirizzi ip dei PLCs</h3>
+        <div class="ips_box">
+          <p *ngFor="let container of deploy.Containers; let i= index" class="ip">{{i+1 + "\) "}}<strong>{{container.IP}}</strong></p>
+        </div>
+        
+      </div>  
+    </div>
+  </p-card>
+</div>

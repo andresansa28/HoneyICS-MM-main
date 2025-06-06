@@ -1,0 +1,69 @@
+---
+manage_snapshots:
+  hosts: []
+  users: []
+  reserved: false
+  hidden: false
+  backend_roles:
+  - "snapshotrestore"
+  and_backend_roles: []
+logstash:
+  hosts: []
+  users: []
+  reserved: false
+  hidden: false
+  backend_roles:
+  - "logstash"
+  and_backend_roles: []
+Analyst:
+  hosts: []
+  users: []
+  reserved: false
+  hidden: false
+  backend_roles:
+  - "Analyst"
+  and_backend_roles: []
+own_index:
+  hosts: []
+  users: []
+  reserved: false
+  hidden: false
+  backend_roles: []
+  and_backend_roles: []
+kibana_user:
+  hosts: []
+  users: []
+  reserved: false
+  hidden: false
+  backend_roles:
+  - "kibanauser"
+  and_backend_roles: []
+  description: "Maps kibanauser to kibana_user"
+_meta:
+  type: "rolesmapping"
+  config_version: 2
+all_access:
+  hosts: []
+  users: []
+  reserved: false
+  hidden: false
+  backend_roles:
+  - "admin"
+  and_backend_roles: []
+  description: "Maps admin to all_access"
+readall:
+  hosts: []
+  users: []
+  reserved: false
+  hidden: false
+  backend_roles:
+  - "readall"
+  and_backend_roles: []
+kibana_server:
+  hosts: []
+  users:
+  - "kibanaserver"
+  reserved: true
+  hidden: false
+  backend_roles: []
+  and_backend_roles: []
