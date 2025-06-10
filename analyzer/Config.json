@@ -1,36 +1,21 @@
 {
-  "opensearch_configured": "True",
+  "opensearch_configured": "False",
   "MaxMind_GeoDB_Key": "",
   "pcapFolder": "pcaps/",
   "delay": 40,
   "zeek_path": "/usr/local/zeek/bin/zeek",
   "RemoteDeployments": [
+    
     {
-      "name": "deploy1",
-      "IP": "192.168.10.1",
-      "user": "admin",
-      "passw": "admin",
+      "name": "prova",
+      "IP": "192.168.3.102",
+      "user": "andrea",
+      "passw": "1234",
       "active": true,
       "Containers": [
         {
-          "IP": "192.168.10.111",
-          "name": "PLC1"
-        },
-        {
-          "IP": "192.168.10.112",
-          "name": "PLC2"
-        },
-        {
-          "IP": "192.168.10.113",
-          "name": "PLC3"
-        },
-        {
-          "IP": "192.168.10.114",
-          "name": "HMI1"
-        },
-        {
-          "IP": "192.168.10.112",
-          "name": "HMI2"
+          "IP": "192.168.3.176",
+          "name": "plc1"
         }
       ]
     }

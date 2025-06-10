@@ -2,49 +2,50 @@ version: "3"
 
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:22.0.0
-    container_name: keycloak   
-    command: ['start-dev','--health-enabled=true','--http-relative-path=/auth']
+    image: quay.io/keycloak/keycloak:22.0.0          # Servizio di autenticazione OIDC
+    container_name: keycloak
+    command:
+      - 'start-dev'
+      - '--health-enabled=true'
+      - '--http-relative-path=/auth'
     environment:
-      KC_DB: postgres
+      KC_DB: postgres                                  # Usa PostgreSQL come DB
       KC_DB_URL_HOST: postgres
       KC_DB_URL_DATABASE: keycloak
       KC_DB_USERNAME: keycloak
       KC_DB_SCHEMA: public
       KC_DB_PASSWORD: password
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_LOGIN}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_LOGIN}         # Admin iniziale da .env
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_HTTPS_CERTIFICATE_FILE: /etc/x509/https/tls.crt
       KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/tls.key
-   
     volumes:
-      - ./certs/keycloak:/etc/x509/https
+      - ./certs/keycloak:/etc/x509/https             # Monta i certificati HTTPS generati
     ports:
-      - 8443:8443
+      - 8443:8443                                     # Espone Keycloak su HTTPS
     depends_on:
-      - postgres
+      - postgres                                      # Avvia PostgreSQL prima di Keycloak
     networks:
       framework:
-        ipv4_address: 172.20.0.2
-    
+        ipv4_address: 172.20.0.2                      # IP statico nella rete docker
+
   postgres:
-    image: postgres
+    image: postgres                                  # DB per Keycloak
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data      # Volume persistente per dati DB
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: password
-
     networks:
       framework:
         ipv4_address: 172.20.0.3
 
   os01:
-    image: opensearchproject/opensearch:2.9.0
+    image: opensearchproject/opensearch:2.9.0       # Motore di ricerca / log (OpenSearch)
     container_name: os01
     environment:
-      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
       node.name: os01
       DISABLE_INSTALL_DEMO_CONFIG: "true"
       JAVA_HOME: /usr/share/opensearch/jdk
@@ -53,24 +54,24 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml
-      - ./config.yml:/usr/share/opensearch/config/opensearch-security/config.yml
-      - ./backup:/usr/share/opensearch/backup
-      - ./certs:/usr/share/opensearch/config/certificates:ro
-      - os-data1:/usr/share/opensearch/data
+      - ./opensearch.yml:/usr/share/opensearch/config/opensearch.yml                  # Config principale
+      - ./config.yml:/usr/share/opensearch/config/opensearch-security/config.yml      # Config sicurezza
+      - ./backup:/usr/share/opensearch/backup                                        # Backup configs / snapshot
+      - ./certs:/usr/share/opensearch/config/certificates:ro                        # Certificati TLS
+      - os-data1:/usr/share/opensearch/data                                          # Volume dati OpenSearch
     ports:
-      - 9200:9200
+      - 9200:9200                                    # Porta API OpenSearch
     networks:
       framework:
         ipv4_address: 172.20.0.4
 
   dashboards:
     container_name: dashboard
-    image: opensearchproject/opensearch-dashboards:2.9.0
+    image: opensearchproject/opensearch-dashboards:2.9.0   # UI per esplorare i dati (richiede autenticazione)
     ports:
-      - 5601:5601
+      - 5601:5601                               # Porta UI dashboards
     volumes:
-      - ./certs:/usr/share/opensearch-dashboards/config/certificates:ro
+      - ./certs:/usr/share/opensearch-dashboards/config/certificates:ro  # Certificati TLS
       - ./opensearch-dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
     environment:
       DISABLE_INSTALL_DEMO_CONFIG: "true"
@@ -79,18 +80,18 @@ services:
         ipv4_address: 172.20.0.5
 
   analyzer:
-    container_name: analyzer
-    build: ./analyzer/   
-    volumes: 
-       - ./analyzer/Config.json:/home/Config.json
+    container_name: analyzer                     # Componente che analizza i PCAP (Zeek, pandas, ecc.)
+    build: ./analyzer/
+    volumes:
+      - ./analyzer/Config.json:/home/Config.json # Config per l’analyzer
     ports:
-      - 5003:5003
+      - 5003:5003                                # Porta per controllare Analyzer
     networks:
       framework:
         ipv4_address: 172.20.0.6
 
   webapp_analyzer_bridge:
-    container_name: webapp_analyzer_bridge
+    container_name: webapp_analyzer_bridge       # Ponte tra WebApp e Analyzer
     build: ./webapp_analyzer_bridge/
     ports:
       - 5001:5001
@@ -101,8 +102,7 @@ services:
         ipv4_address: 172.20.0.7
 
   webapp:
-    build:
-      ./webapp/
+    build: ./webapp/                             # Interfaccia grafica principale
     ports:
       - "5002:80"
     networks:
@@ -110,21 +110,19 @@ services:
         ipv4_address: 172.20.0.8
 
   backend:
-    build:
-      ./pythonFastAPI/
+    build: ./pythonFastAPI/                     # API backend per WebApp
     ports:
       - "5000:80"
     networks:
       framework:
         ipv4_address: 172.20.0.9
 
-        
 volumes:
-  os-data1:
-  postgres_data:
+  os-data1:         # Volume persistente per i dati OpenSearch
+  postgres_data:    # Volume persistente per il DB PostgreSQL / Keycloak
 
 networks:
   framework:
     ipam:
       config:
-        - subnet: 172.20.0.0/16
+        - subnet: 172.20.0.0/16   # Sottorete unica per tutta la stack

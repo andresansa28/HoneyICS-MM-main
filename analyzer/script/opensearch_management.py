@@ -80,6 +80,7 @@ def create_index_pattern(index_pattern_name, with_time_field):
 
 def opensearch_first_setup(es, vm_hosts):
     for vm in vm_hosts:
+        print(f"\n>> Requesting tenant info for: {vm['name']}")
         r = requests.get("https://172.17.0.1:9200/_plugins/_security/api/tenants/" + vm["name"], verify=False,
                          auth=HTTPBasicAuth('admin', 'admin'))
 

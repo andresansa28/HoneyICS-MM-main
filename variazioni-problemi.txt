@@ -1,0 +1,54 @@
+Ho fatto queste modifiche:
+1. Nel file new_user.sh, ho sostituito questo blocco di codice (da riga 62 a 67), perche dava un errore se provava a recuperare id admin:
+
+    echo -n "Getting user id..."
+    json_data=$(curl -ks -X GET \
+    $KEYCLOAK_URL/auth/admin/realms/ICSConsole/ui-ext/brute-force-user \
+    -H "Authorization: Bearer $ADMIN_TOKEN")
+
+    user_id=$(echo "$json_data" | jq '.[1].id' | tr -d '"')
+
+    con questo:
+
+    echo -n "Getting user id..."
+    json_data=$(curl -ks -X GET \
+    "$KEYCLOAK_URL/auth/admin/realms/ICSConsole/users?username=admin1" \
+    -H "Authorization: Bearer $ADMIN_TOKEN")
+
+    user_id=$(echo "$json_data" | jq -r '.[0].id')
+
+
+
+2. nel file real.json, ho modificato il redirect_uri della webapp, perche veniva indirizzato verso la porta 4200, ma la porta
+esposta dal container è la 5200
+
+
+
+
+Problemi:
+Quando nel Config.json imposto "opensearch_configured": "False", il metodo opesearch_fist_setup del file "opensearch_managmente.py"
+da questo errore:
+
+File "/home/script/main.py", line 269, in <module>
+    opensearch_management.opensearch_first_setup(es, get_remote_deployments())
+  File "/home/script/opensearch_management.py", line 84, in opensearch_first_setup
+    r = requests.get("https://172.17.0.1:9200/_plugins/_security/api/tenants/" + vm["name"], verify=False,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/requests/api.py", line 76, in get
+    return request('get', url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/requests/api.py", line 61, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/requests/sessions.py", line 542, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/requests/sessions.py", line 655, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/requests/adapters.py", line 514, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='172.17.0.1', port=9200): Max retries exceeded with url: /_plugins/_security/api/tenants/prova (Caused by SSLError(SSLZeroReturnError(6, 'TLS/SSL connection has been closed (EOF) (_ssl.c:992)')))
+
+
+Praticamente chatGpt dice che è un problema con il protocollo SSL
