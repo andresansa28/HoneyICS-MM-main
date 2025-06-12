@@ -49,7 +49,7 @@ es = OpenSearch(
     verify_certs=False,
     ssl_assert_hostname=False,
     ssl_show_warn=False,
-    # ca_certs=ca_certs_path,
+    #ca_certs="../certs/ca/ca.pem"
 )
 
 

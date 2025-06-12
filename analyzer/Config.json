@@ -1,11 +1,10 @@
 {
-  "opensearch_configured": "False",
+  "opensearch_configured": "True",
   "MaxMind_GeoDB_Key": "",
   "pcapFolder": "pcaps/",
   "delay": 40,
   "zeek_path": "/usr/local/zeek/bin/zeek",
   "RemoteDeployments": [
-    
     {
       "name": "prova",
       "IP": "192.168.3.102",

@@ -10,12 +10,12 @@ class Host(object):
                  host_ip,
                  username,
                  password,
-                 key_filename
+                 
                  ):
         self.host_ip = host_ip
         self.username = username
         self.password = password
-        self.key_filename = ''
+        
 
     def _get_connection(self):
         return Connection(host=self.host_ip, user=self.username,

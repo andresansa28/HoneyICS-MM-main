@@ -22,6 +22,9 @@ Ho fatto queste modifiche:
 2. nel file real.json, ho modificato il redirect_uri della webapp, perche veniva indirizzato verso la porta 4200, ma la porta
 esposta dal container è la 5200
 
+3. Nel file /home/andrea/HoneyICS-MM/HoneyICS-MM-main/analyzer/script/ssh_management.py ho rimosso le righe relativa alla key_primary per la
+connessione ssh, ora funziona utilizzando username e password
+
 
 
 
@@ -50,5 +53,18 @@ File "/home/script/main.py", line 269, in <module>
     raise SSLError(e, request=request)
 requests.exceptions.SSLError: HTTPSConnectionPool(host='172.17.0.1', port=9200): Max retries exceeded with url: /_plugins/_security/api/tenants/prova (Caused by SSLError(SSLZeroReturnError(6, 'TLS/SSL connection has been closed (EOF) (_ssl.c:992)')))
 
-
 Praticamente chatGpt dice che è un problema con il protocollo SSL
+FORSE risolto aggiungendo nello start.sh un controllo per verificare quando il nodo opensearch è attivo (da riga 106 a 117):
+while true; do
+        RESPONSE=$(curl -sk -u admin:admin https://localhost:9200/_cluster/health)
+    
+        if [[ "$RESPONSE" == *"cluster_name"* ]]; then
+            echo "✅ OpenSearch ha risposto:"
+            echo "$RESPONSE"
+            break
+        else
+            echo "🔁 Nessuna risposta valida da OpenSearch, riprovo tra 2 secondi..."
+            sleep 2
+        fi
+    done
+

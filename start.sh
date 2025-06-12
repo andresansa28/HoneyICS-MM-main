@@ -103,8 +103,21 @@ if test -f "$FILE"; then
 
     # Avvia i servizi restanti
     docker compose up -d os01 dashboards
+    while true; do
+        RESPONSE=$(curl -sk -u admin:admin https://localhost:9200/_cluster/health)
+    
+        if [[ "$RESPONSE" == *"cluster_name"* ]]; then
+            echo "✅ OpenSearch ha risposto:"
+            echo "$RESPONSE"
+            break
+        else
+            echo "🔁 Nessuna risposta valida da OpenSearch, riprovo tra 2 secondi..."
+            sleep 2
+        fi
+    done
     docker compose up -d analyzer
     docker compose up -d backend
     docker compose up -d webapp_analyzer_bridge
     docker compose up -d webapp
+
 fi

@@ -79,13 +79,14 @@ def create_index_pattern(index_pattern_name, with_time_field):
 
 
 def opensearch_first_setup(es, vm_hosts):
+    print("Prova accesso al metodo")
     for vm in vm_hosts:
         print(f"\n>> Requesting tenant info for: {vm['name']}")
         r = requests.get("https://172.17.0.1:9200/_plugins/_security/api/tenants/" + vm["name"], verify=False,
                          auth=HTTPBasicAuth('admin', 'admin'))
 
         tenant = vm["name"]
-
+        print(tenant)
         if "status" in r.json():
             # create tenant
             headers = {'osd-xsrf': 'true',
