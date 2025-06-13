@@ -122,6 +122,15 @@ export class DeploymentComponent implements OnInit{
     };
 
     this.configS.addDeployment(deploy).subscribe((res: any) => { 
+      this.initDeployments();
+      this.name_input = '';
+      this.IP_input = '';
+      this.user_input = '';
+      this.passw_input = '';
+      this.Containers_input = [];
+
+      this.add_container_ip_input = '';
+      this.add_container_name_input = '';
     });
   }
 
@@ -129,10 +138,10 @@ export class DeploymentComponent implements OnInit{
     console.log(ipToRemove);
     this.configS.removeDeployment(ipToRemove).subscribe((res: any) => { 
       console.log(res);
-      if (res["message"] == "Deployments added successfully"){
+      if (res["message"] == "Deployments removed successfully"){
         this.initDeployments();
       } else {
-        this._snackBar.open('Errore nell\'aggiunta del deployment!', 'Chiudi', {
+        this._snackBar.open('Errore nella rimozione del deployment!', 'Chiudi', {
           duration: 2000, // Durata in millisecondi
       });
       }

@@ -25,6 +25,9 @@ esposta dal container è la 5200
 3. Nel file /home/andrea/HoneyICS-MM/HoneyICS-MM-main/analyzer/script/ssh_management.py ho rimosso le righe relativa alla key_primary per la
 connessione ssh, ora funziona utilizzando username e password
 
+4. Modificato file webapp poichè i pulsanti di aggiunta e rimozione di un deploy non aggiornavano la pagina ed erano sbagliate le stampe di 
+successo/fallimento di un operazione
+
 
 
 
